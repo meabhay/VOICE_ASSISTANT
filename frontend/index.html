@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Cooking Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      };
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+    <div class="max-w-3xl mx-auto px-4 py-8">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-extrabold">👩‍🍳 Voice Cooking Assistant</h1>
+        <button id="toggleDark" class="text-xl p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition-transform">
+          <i id="darkIcon" class="fas fa-moon"></i>
+        </button>
+      </div>
+
+      <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow-md transition-all">
+        <label for="textInput" class="block text-lg font-medium mb-2">Ask for a recipe</label>
+        <div class="flex flex-col sm:flex-row gap-4 items-center">
+          <input
+            id="textInput"
+            type="text"
+            placeholder="e.g. How do I make lasagna?"
+            class="w-full flex-1 px-4 py-2 text-lg rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+          />
+          <button
+            id="voiceBtn"
+            class="bg-green-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition-transform"
+          >
+            <i class="fas fa-microphone"></i> Speak
+          </button>
+        </div>
+      </div>
+
+      <div id="output" class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md min-h-[150px] transition-all">
+        <p class="text-gray-700 dark:text-gray-300">Recipe instructions will appear here...</p>
+      </div>
+
+      <div id="savedRecipes" class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Saved Recipes</h2>
+        <div id="recipesList" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html> 
