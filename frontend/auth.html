@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auth Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .auth-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .toggle-password {
+      margin-top: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    button {
+      width: 100%;
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 1rem;
+      cursor: pointer;
+      color: #007bff;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2 id="formTitle">Sign In</h2>
+    <div class="error" id="error"></div>
+
+    <!-- Sign In Form -->
+    <form id="signinForm">
+      <div class="input-group">
+        <label for="signinEmail">Email</label>
+        <input type="email" id="signinEmail" required />
+      </div>
+      <div class="input-group">
+        <label for="signinPassword">Password</label>
+        <input type="password" id="signinPassword" required />
+        <div class="toggle-password" onclick="togglePassword('signinPassword')">Show/Hide Password</div>
+      </div>
+      <button type="submit">Sign In</button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form id="signupForm" class="hidden">
+      <div class="input-group">
+        <label for="signupName">Name</label>
+        <input type="text" id="signupName" required />
+      </div>
+      <div class="input-group">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" required />
+      </div>
+      <div class="input-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required />
+        <div class="toggle-password" onclick="togglePassword('signupPassword')">Show/Hide Password</div>
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <!-- Switch Link -->
+    <div class="toggle-link" onclick="toggleForms()">Don't have an account? Sign Up</div>
+  </div>
+
+  <script>
+    const signinForm = document.getElementById('signinForm');
+    const signupForm = document.getElementById('signupForm');
+    const errorDiv = document.getElementById('error');
+    const toggleLink = document.querySelector('.toggle-link');
+    const formTitle = document.getElementById('formTitle');
+
+    // Sign In Handler
+    signinForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = '';
+
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/auth/signin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.msg || 'Something went wrong');
+        }
+
+        localStorage.setItem('token', data.token);
+        alert('Sign in successful!');
+        window.location.href = './index.html';
+      } catch (err) {
+        errorDiv.textContent = err.message;
+      }
+    });
+
+    // Sign Up Handler
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = '';
+
+      const fullName = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, fullName, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.msg || 'Something went wrong');
+        }
+
+        alert('Sign up successful! Please log in.');
+        toggleForms(); // Switch to login form
+      } catch (err) {
+        errorDiv.textContent = err.message;
+      }
+    });
+
+    // Toggle password visibility
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // Toggle forms
+    function toggleForms() {
+      const isSignInVisible = !signinForm.classList.contains('hidden');
+
+      signinForm.classList.toggle('hidden');
+      signupForm.classList.toggle('hidden');
+
+      formTitle.textContent = isSignInVisible ? 'Sign Up' : 'Sign In';
+      toggleLink.textContent = isSignInVisible
+        ? 'Already have an account? Sign In'
+        : 'Don’t have an account? Sign Up';
+
+      errorDiv.textContent = '';
+    }
+  </script>
+</body>
+</html>
